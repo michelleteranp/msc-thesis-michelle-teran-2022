@@ -1,0 +1,423 @@
+### Extraction of three candidate genes: ZmCCT, Anthocyanin regulatory C1 and ZmRLK1 ###
+
+# small_NAM_pangenome (parameters: -p 90, -s 10000, -a asm20, -n 7)
+# genomes: B73_v4, B73_v5, B97, CML52, HP301, Il14H, M37W
+# Objective: Extract loci - +/- 1000 bp
+
+# navigate to working directory
+
+# run conda
+conda activate odgi
+
+# see path names to create .bed file
+odgi paths -i chr10.og -l -L
+#MA_B73_v4.1.chr10       1       150982314
+#MA_B73_v5.1.chr10       1       152435371
+#MA_B97.1.chr10          1       150885398
+#MA_CML52.1.chr10        1       152931176
+#MA_HP301.1.chr10        1       150435773
+#MA_Il14H.1.chr10        1       151993662
+#MA_M37W.1.chr10         1       153902501
+
+### 1. Flowering time: ZmCCT  - Zm00001d024909 (AGPv04) - 10:94430850-94433495 ###
+# create bed file with coordinates +- 1000 bp
+nano ZmCCT.bed
+#extraction
+odgi extract -i chr10.og  -b ZmCCT.bed -P -s -E
+#result
+MA_B73_v4.1.chr10:94429850-94434495.og
+#stats
+odgi stats -S -i MA_B73_v4.1.chr10:94429850-94434495.og
+    #length nodes   edges   paths
+    #5621    252     343     7
+# visualization 1D with odgi viz
+odgi viz -i MA_B73_v4.1.chr10:94429850-94434495.og -o ZmCCT_extracted.png -x 500 # it works!
+
+# visualize in STM
+odgi view -i MA_B73_v4.1.chr10:94429850-94434495.og -g > MA_B73_v4.1.chr10:94429850-94434495.gfa
+vg view MA_B73_v4.1.chr10:94429850-94434495.gfa -v > MA_B73_v4.1.chr10:94429850-94434495.vg
+vg index MA_B73_v4.1.chr10:94429850-94434495.vg -x ZmCCT_bed_extraction_spg.xg
+
+odgi view -i chr8.og -g > chr8.gfa
+vg view chr8.gfa -v > chr8.vg
+vg index chr8.vg -x chr8_sp.xg
+
+# get a list with node identifiers and node lengths
+odgi view -i MA_B73_v4.1.chr10:94429850-94434495.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > ZmCCT_nodelist.txt
+# first node ID in this og file 8809933
+# last node ID in this og file 8810184
+
+# start position of the gene
+odgi position -i chr10.og -p MA_B73_v4.1.chr10,94430850+ -v
+#source.path.pos        target.graph.pos 
+#MA_B73_v4.1.chr10,94430850,+    8810032,22,+ (node, offset, strand)
+# stop position of the gene
+odgi position -i chr10.og -p MA_B73_v4.1.chr10,94433495+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr10,94433495,+    8810176,306,+
+
+### 2. Resistance ZmRLK1 - Zm00001d011629 (AGPv04) - 8:156763311..156774071 ###
+nano ZmRLK1.bed # here I have the positions -1000 +1000 bp
+less ZmRLK1.bed
+odgi extract -i chr8.og -b ZmRLK1.bed -P -s -E
+
+# result
+MA_B73_v4.1.chr8:156762311-156775071.og
+
+odgi stats -S -i MA_B73_v4.1.chr8:156762311-156775071.og
+#length nodes   edges   paths
+#919581  19089   26423   16                 # 16 paths????
+
+# visualization 1D
+odgi viz -i MA_B73_v4.1.chr8:156762311-156775071.og -o ZmRLK1_extracted.png -x 500 # each genome divided in 2-3 paths
+
+# visualize in STM
+odgi view -i MA_B73_v4.1.chr8:156762311-156775071.og -g > RLK1.gfa
+vg view RLK1.gfa -v > RLK1.vg
+vg index RLK1.vg -x RLK1_bed_extraction_spg.xg
+
+# get a list with node identifiers and node lengths
+odgi view -i MA_B73_v4.1.chr8:156762311-156775071.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > RLK1_nodelist.txt
+head RLK1_nodelist.txt
+# first node ID 11549165
+# last node ID 11568253
+
+# start position of the gene
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156763311,+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr8,156763311,+    11568121,4,+
+# stop position of the gene 156774071
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156774071,+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr8,156774071,+    11556654,103,+
+
+### 3. Anthocyanin regulatory C1 - Zm00001d044975 (AGPv04) - 9:8983448..8984721 ###
+nano C1.bed
+less C1.bed
+
+odgi extract -i chr.og -b C1.bed -P -s -E
+
+#result
+MA_B73_v4.1.chr9:8982448-8985721.og
+
+odgi stats -S -i MA_B73_v4.1.chr9:8982448-8985721.og
+#length nodes   edges   paths
+#10579   3174    4364    12         #12 paths???
+
+odgi viz -i MA_B73_v4.1.chr9:8982448-8985721.og -o C1_extracted.png -x 500
+
+# visualize in STM
+odgi view -i MA_B73_v4.1.chr9:8982448-8985721.og -g > C1.gfa
+vg view C1.gfa -v > C1.vg
+vg index C1.vg -x C1_bed_extraction_spg.xg
+
+odgi view -i MA_B73_v4.1.chr9:8982448-8985721.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > C1_nodelist.txt
+head C1_nodelist.txt
+tail C1_nodelist.txt
+# first node ID 2386062
+# last node ID 2389235
+
+# start position of the gene 8983448
+odgi position -i chr9.og -p MA_B73_v4.1.chr9,8983448+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr9,8983448,+      2389199,99,-
+# stop position of the gene 8984721
+odgi position -i chr9.og -p MA_B73_v4.1.chr9,8984721+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr9,8984721,+      2388720,2,-
+
+### end of extractions - this example was included in MSc thesis ###
+
+################################################################################################################################################################################
+# exploration of sub-paths resulting from the extraction process
+odgi paths -i MA_B73_v4.1.chr9:8982448-8985721.og -l -L
+#MA_B73_v4.1.chr9:8982438-8985721        1       3283
+#MA_B73_v5.1.chr9:11116092-11119375      1       3283
+#MA_B73_v5.1.chr9:11144636-11144915      1       279
+#MA_B97.1.chr9:11365877-11369157         1       3280
+#MA_B97.1.chr9:11394414-11394693         1       279
+#MA_CML52.1.chr9:10881417-10887849       1       6432
+#MA_CML52.1.chr9:10913110-10913389       1       279
+#MA_HP301.1.chr9:11338815-11343966       1       5151
+#MA_Il14H.1.chr9:11214252-11219398       1       5146
+#MA_Il14H.1.chr9:11244658-11244937       1       279
+#MA_M37W.1.chr9:10585530-10592372        1       6842
+#MA_M37W.1.chr9:10617626-10617905        1       279
+
+### how to manage issue of paths divided into several sub - paths ??? ###
+# RLK1 extraction
+odgi paths -i MA_B73_v4.1.chr8:156762311-156775071.og -l -L
+#path                                   start     end
+#MA_B73_v4.1.chr8:156762303-156919199    1       156896
+#MA_B73_v4.1.chr8:158898807-158898808    1       1              # 1     1 !!!
+#MA_B73_v5.1.chr8:156051595-156208570    1       156975
+#MA_B73_v5.1.chr8:158188325-158188326    1       1
+#MA_B97.1.chr8:157874416-157908063       1       33647
+#MA_B97.1.chr8:157956924-158096664       1       139740
+#MA_B97.1.chr8:160170245-160170246       1       1
+#MA_CML52.1.chr8:157399010-157753840     1       354830
+#MA_CML52.1.chr8:159927656-159927657     1       1
+#MA_HP301.1.chr8:153690112-153712889     1       22777
+#MA_HP301.1.chr8:153714262-153791096     1       76834
+#MA_HP301.1.chr8:155479585-155479586     1       1
+#MA_Il14H.1.chr8:154255821-154309688     1       53867
+#MA_Il14H.1.chr8:155961182-155961183     1       1
+#MA_M37W.1.chr8:158166233-158368275      1       202042
+#MA_M37W.1.chr8:160239037-160239038      1       1
+
+odgi sort -i MA_B73_v4.1.chr8:156762311-156775071.og -O -o RLK1_sorted.og
+
+odgi paths -i RLK1_sorted.og -l -L                              # same result obtained after sorting
+#MA_B73_v4.1.chr8:156762303-156919199    1       156896
+#MA_B73_v4.1.chr8:158898807-158898808    1       1
+#MA_B73_v5.1.chr8:156051595-156208570    1       156975
+#MA_B73_v5.1.chr8:158188325-158188326    1       1
+#MA_B97.1.chr8:157874416-157908063       1       33647
+#MA_B97.1.chr8:157956924-158096664       1       139740
+#MA_B97.1.chr8:160170245-160170246       1       1
+#MA_CML52.1.chr8:157399010-157753840     1       354830
+#MA_CML52.1.chr8:159927656-159927657     1       1
+#MA_HP301.1.chr8:153690112-153712889     1       22777
+#MA_HP301.1.chr8:153714262-153791096     1       76834
+#MA_HP301.1.chr8:155479585-155479586     1       1
+#MA_Il14H.1.chr8:154255821-154309688     1       53867
+#MA_Il14H.1.chr8:155961182-155961183     1       1
+#MA_M37W.1.chr8:158166233-158368275      1       202042
+#MA_M37W.1.chr8:160239037-160239038      1       1
+
+### eliminate 1 - 1 paths
+odgi extract -i MA_B73_v4.1.chr8:156762311-156775071.og -p paths_to_conserve.txt -E -o RLK1_conserved_paths.og
+
+nano paths_to_conserve.txt
+less paths_to_conserve.txt
+
+nano paths_to_remove
+less paths_to_remove
+
+odgi prune -i MA_B73_v4.1.chr8:156762311-156775071.og -D -o RLK1_after_removing.og # -D remove all paths from the graph
+odgi stats -i RLK1_after_removing.og -S
+odgi paths -i RLK1_after_removing.og -l -L 
+odgi viz -i RLK1_after_removing.og -o RLK1_without_paths.png -x 500
+
+odgi prune -i MA_B73_v4.1.chr8:156762311-156775071.og -r 
+
+#https://github.com/pangenome/odgi/pull/419
+#odgi extract -i chr6.pan.fa.a2fb268.4030258.6a1ecc2.smooth.og -L 100000 -r grch38#chr6:29722775-33143325 -o - -t 16 | odgi sort -t 16 -i - -O -o mhc.og && odgi viz -i mhc.og -o mhc.png 
+#odgi extract -i chr6.pan.fa.a2fb268.4030258.6a1ecc2.smooth.og -L 100000 -r grch38#chr6:29722775-33143325 -o - -t 16 -d 500000 | odgi sort -t 16 -i - -O -o mhc.og && odgi viz -i mhc.og -o mhc.png 
+
+#Added new parameter -d/--max-distance-subpaths that is the maximum distance between subpaths allowed for merging them. (POSSIBLE SOLUTION)
+#-L, --context-bases
+#The number of bases N away from our initial subgraph that we should collect.
+nano ZmRLK1_start_end.bed
+less ZmRLK1_start_end.bed
+
+odgi extract -i chr8.og -b ZmRLK1_start_end.bed -P -d 10000 -L 1000 -E -o RLK1_flagD.og ### flag issue, now it works
+odgi stats -i RLK1_flagD.og -S # still 42 paths!
+
+# with range and L = lots of paths
+odgi extract -i chr8.og -L 1000 -r MA_B73_v4.1.chr8:156763311-156774071 -o - | odgi sort -i - -O -o RLK1_byrange.og && odgi viz -i RLK1_byrange.og -o RLK1_byrange.png # many many subpaths
+
+# with BED file (original start end positions), -L and E
+odgi extract -i chr8.og -b ZmRLK1_start_end.bed -L 1000 -o - -E | odgi sort -i - -O -o RLK1_bed.og && odgi viz -i RLK1_bed.og -o RLK1_bed.png # still several subpaths, but less compared to options before
+odgi stats -i RLK1_bed.og -S
+
+
+### extraction via node ID ###
+# get node ID
+# Resistance	ZmRLK1 - Zm00001d011629 (AGPv04)	8		156763311	156774071			
+#start
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156763311,+ -v
+#source.path.pos        target.graph.pos
+# MA_B73_v4.1.chr8,156763311,+    11568121,4,+
+# node ID start position 11568121
+#end
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156774071,+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr8,156774071,+    11556654,103,+
+# node ID end position 11556654 ??? node ID < than start position
+
+odgi extract -i chr8.og -r MA_B73_v4.1.chr8:156763311-156774071 -E -P -o RLK1_extracted_range.og # 16 paths, same problem as BED extraction, withoyt -E there are even more subpaths
+odgi paths -i RLK1_extracted_range.og -L -l
+#MA_B73_v4.1.chr8:156762796-156919199    1       156403
+#MA_B73_v4.1.chr8:158898807-158898808    1       1
+#MA_B73_v5.1.chr8:156052088-156208570    1       156482
+#MA_B73_v5.1.chr8:158188325-158188326    1       1
+#MA_B97.1.chr8:157874851-157908063       1       33212
+#MA_B97.1.chr8:157956924-158096664       1       139740
+#MA_B97.1.chr8:160170245-160170246       1       1
+#MA_CML52.1.chr8:157749239-157753840     1       4601
+#MA_CML52.1.chr8:159927656-159927657     1       1
+#MA_HP301.1.chr8:153690547-153712889     1       22342
+#MA_HP301.1.chr8:153714262-153791096     1       76834
+#MA_HP301.1.chr8:155479585-155479586     1       1
+#MA_Il14H.1.chr8:154266323-154309688     1       43365
+#MA_Il14H.1.chr8:155961182-155961183     1       1
+#MA_M37W.1.chr8:158166233-158368275      1       202042
+#MA_M37W.1.chr8:160239037-160239038      1       1
+odgi normalize -i RLK1_extracted_range.og -o RLK1_normalized.og # does not solve the 16 paths
+odgi paths -i RLK1_normalized.og -l -L
+
+odgi unchop -i RLK1_extracted_range.og -o RLK1_unchop.og # does not solve the 16 paths
+odgi paths -i RLK1_unchop.og -l -L
+
+odgi sort -i RLK1_extracted_range.og -O -o RLK1_optimized.og # does not solve the 16 paths
+odgi paths -i RLK1_optimized.og -l -L
+
+###############################################################################################################################################################################
+# Explore node ID
+# complete chromosome
+odgi view -i chr8.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > chr8_nodelist.txt
+#  first node ID 1 - last node ID 17531700
+
+# RLK1 extracted
+odgi view -i MA_B73_v4.1.chr8:156762311-156775071.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > RLK1_nodelist.txt #original range
+# first node ID 11549165 - last node ID 11568253
+
+#start
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156763311,+ -v
+#source.path.pos        target.graph.pos
+# MA_B73_v4.1.chr8,156763311,+    11568121,4,+
+# node ID start position 11568121
+#end
+odgi position -i chr8.og -p MA_B73_v4.1.chr8,156774071,+ -v
+#source.path.pos        target.graph.pos
+#MA_B73_v4.1.chr8,156774071,+    11556654,103,+
+# node ID end position 11556654 ??? node ID < than start position
+
+################################################################################################################################################################################
+# Perform extractions in a pangenome with 6 genomes (set A)
+# navigate to working directory
+
+# Set A (-p 80, -s 10000, -a asm20)
+# 1. Flowering time
+# ZmCCT  - Zm00001d024909 (AGPv04) - 10:94430850-94433495
+nano ZmCCT.bed
+less ZmCCT.bed
+#MA_B73_v4.1.chr10   94430850    94433495
+
+odgi extract -i chr10.og -b ZmCCT.bed -L 1000 -P -E -o ZmCCT_extracted_setA.og #instead of using -s I used the output name and instead of +-1000 bp in BED file I use -L
+
+odgi stats -S -i ZmCCT_extracted_setA.og
+#length nodes   edges   paths
+#1174    107     145     6          
+
+odgi viz -i ZmCCT_extracted_setA.og -o ZmCCT_extracted_setA.png -x 500
+
+# visualize in STM
+odgi view -i ZmCCT_extracted_setA.og -g > ZmCCT_extracted_setA.gfa
+vg view ZmCCT_extracted_setA.gfa -v > ZmCCT_extracted_setA.vg
+vg index ZmCCT_extracted_setA.vg -x ZmCCT_extracted_setA.xg
+
+odgi view -i ZmCCT_extracted_setA.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > ZmCCT_extracted_setA_nodes.txt
+head ZmCCT_extracted_setA_nodes.txt
+tail ZmCCT_extracted_setA_nodes.txt
+# first node ID in this og file 10365880
+# last node ID in this og file 10365986
+
+# it works!
+
+# 2. Resistance
+    #ZmRLK1 - Zm00001d011629 (AGPv04) - 8:156763311..156774071
+    #Loci - +/- 1000 bp
+nano RLK1.bed
+less RLK1.bed
+#MA_B73_v4.1.chr8   156763311    156774071
+
+odgi extract -f chr8.og -b RLK1.bed -L 1000 -P -E -o RLK1_extracted_setA.og
+odgi extract -i chr8.og -r MA_B73_v4.1.chr8:156763311-156774071 -L 1000 -P -E -o RLK1_extracted_range_setA.og
+
+odgi stats -S -i RLK1_extracted_setA.og
+#length          nodes          edges            paths
+#232044061       21727813        30344039        280849  !!! number of paths 
+odgi viz -i RLK1_extracted_setA.og -o RLK1_extracted_setA.png -x 500 # fails
+
+odgi stats -S -i RLK1_extracted_range_setA.og
+#length nodes   edges   paths
+#232044061       21727813        30344039        280849
+
+nano RLK1_bp.bed
+less RLK1_bp.bed
+odgi extract -i chr8.og -b RLK1_bp.bed -P -s -E
+
+# result MA_B73_v4.1.chr8:156762311-156775071.og
+odgi stats -i MA_B73_v4.1.chr8:156762311-156775071.og -S
+#length nodes   edges   paths
+#109665145       7559304 10345671        419369 !!! number of paths
+
+### ---
+# no -E, because documentation states be careful to use with complex graphs
+odgi extract -i chr8.og -b RLK1.bed -L 1000 -P -o RLK1_woE.og
+odgi stats -i RLK1_woE.og -S # 496 paths, still a lot, but less than with -E
+odgi paths -i RLK1_woE.og -L -l 
+
+MA_B73_v4.1.chr8:102582438-102582439    1       1
+MA_B73_v4.1.chr8:156763305-156774138    1       10833
+MA_Mo18W.1.chr8:156435497-156435623     1       126
+MA_Mo18W.1.chr8:156435624-156435639     1       15
+MA_Mo18W.1.chr8:156435644-156435689     1       45
+MA_Mo18W.1.chr8:156435690-156435786     1       96
+MA_Mo18W.1.chr8:156435936-156435982     1       46
+MA_Mo18W.1.chr8:156436711-156436761     1       50
+MA_Mo18W.1.chr8:156436763-156436783     1       20
+MA_Mo18W.1.chr8:156436784-156436809     1       25
+MA_Mo18W.1.chr8:156436816-156436875     1       59
+MA_Mo18W.1.chr8:156436876-156436989     1       113
+MA_Mo18W.1.chr8:156436990-156437067     1       77
+...
+
+
+odgi extract -i chr8.og -b RLK1.bed -L 1000 -d 500 -P -o RLK1_woE_d.og
+odgi stats -i RLK1_woE_d.og -S # 25 paths, now less paths!
+odgi paths -i RLK1_woE_d.og -L -l
+
+
+odgi extract -i chr8.og -b RLK1.bed -L 1000 -d 3000 -P -o RLK1_woE_dinc.og
+odgi stats -i RLK1_woE_dinc.og -S # 15 paths
+odgi paths -i RLK1_woE_dinc.og -L -l # diff 9573  
+MA_B73_v4.1.chr8:102582438-102582439    1       1
+MA_B73_v4.1.chr8:156763305-156774138    1       10833
+MA_Mo18W.1.chr8:156435497-156453402     1       17905
+MA_B97.1.chr8:102314071-102314072       1       1
+MA_B97.1.chr8:157875311-157881019       1       5708
+MA_B97.1.chr8:157901956-157908710       1       6754
+MA_B97.1.chr8:157957465-157967871       1       10406
+MA_B97.1.chr8:157977444-157982353       1       4909
+MA_CML52.1.chr8:157593978-157608375     1       14397
+MA_HP301.1.chr8:153691007-153696429     1       5422
+MA_HP301.1.chr8:153706478-153714054     1       7576
+MA_Il14H.1.chr8:154269031-154282523     1       13492
+MA_Il14H.1.chr8:154294089-154295166     1       1077
+MA_Il14H.1.chr8:154301024-154301345     1       321
+MA_Il14H.1.chr8:154304654-154310134     1       5480
+
+
+odgi view -i RLK1_woE_dinc.og -g > RLK1_woE_dinc.gfa
+vg view RLK1_woE_dinc.gfa -v > RLK1_woE_dinc.vg
+vg index RLK1_woE_dinc.vg -x RLK1_woE_dinc.xg
+
+odgi paths -i RLK1_woE_dinc.og -l -L
+
+odgi view -i RLK1_woE_dinc.og -g | grep '^S' | awk -v OFS='\t' '{print($2,length($3))}' > nodes_RLK1_d.txt
+head nodes_RLK1_d.txt
+tail nodes_RLK1_d.txt
+
+#13563121 first node ID
+#35316734 last node ID
+
+# STM 
+# visualization with first node ID: only B73 and B97
+# node: 35316715+20000 more paths there
+
+# 3. Anthocyanin regulatory C1 - Zm00001d044975 (AGPv04) - 9:8983448..8984721
+nano kernel_C1.bed #started to create this file
+less kernel_C1.bed
+#MA_B73_v4.1.chr9   8983448    8984721
+
+odgi extract -i chr9.og -b kernel_C1.bed -L 1000 -P -E -o C1_extracted_setA.og
+
+odgi stats -i C1_extracted_setA.og -S
+#length nodes   edges   paths
+#326231388       32921162        46226692        3655 !!! number of paths
+# -d available in latest odgi release, try that...
+
+# Extraction in this pangenome contained even more sub-paths compared to the extraction in the pangenome with 7 genomes.

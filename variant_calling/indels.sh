@@ -1,0 +1,47 @@
+### indels ###
+# navigate to working directory
+# run conda
+conda activate odgi
+
+# pangenome file with chr and sample names edited, without conflicts and before all filtering.
+6pg_conflicts_removed.bcf
+bcftools view 6pg_conflicts_removed.bcf | less -S
+rm -r temp.vcf
+
+bcf=/michelle/vc_process/6pg_conflicts_removed.bcf
+fasta=/uploaded/MA_B73_AGPv4_chromosomes.fasta
+work_dir=/michelle/vc_process
+
+bcftools annotate -Ou -x ^INFO/NS,^INFO/AC,^INFO/AF,^INFO/AN,^FORMAT/GT $bcf | \
+    bcftools view -Ou -i 'GT[*]="alt"' - | \
+    bcftools view -Oz -v indels --exclude-uncalled - | \
+    bcftools norm -Ou -a -D -f $fasta - | \
+    bcftools annotate -Ou --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' - | \
+    bcftools +fixploidy - -- -t GT > $work_dir/temp.vcf
+
+bcftools view temp.vcf > indels_pg.vcf
+
+bcftools stats indels_pg.vcf > stats_indels_ext.txt
+cat stats_indels_ext.txt | less # 34500479 records (25496932 SNPs, 8698570 indels, 304977 others, 26111110 multiallelic sites)
+
+bcftools view -V snps,mnps,other indels_pg.vcf > indels_exclist.vcf #***
+bcftools stats indels_exclist.vcf > stats_indels_exclist.txt
+cat stats_indels_exclist.txt | less # 8698570 records (8698570 indels, 1592587 multiallelic sites)
+bcftools view indels_exclist.vcf | less -S
+
+## indel distribution
+cat stats_indels_exclist.txt | less # number of indels = 8698570
+cat stats_indels_exclist.txt | grep 'IDD' > indel_distribution_exclist.txt
+
+less indel_distribution_exclist.txt
+
+# now I want to look for indels that are larger than 100 bp.
+# test with chr 1
+grep -w '^#\|^#CHROM\|^1' indels_exclist.vcf > indels_pangenome_chr1.vcf
+bcftools view indels_pangenome_chr1.vcf | less -S
+
+# all indels from pangenome file, only columns CHROM, POS, REF and ALT.
+cut -f 1,2,4,5 indels_exclist.vcf > indels_pangenome.txt
+less indels_pangenome.txt
+
+### continue in gtcheck_vc_calling_process.R

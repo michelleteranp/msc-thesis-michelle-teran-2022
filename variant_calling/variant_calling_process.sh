@@ -1,0 +1,222 @@
+### Variant calling process ###
+# variant_calling corrected formats and fasta included now
+# navigate to working directory
+# run conda
+conda activate odgi
+
+### HapMap 3 dataset
+hapmap_NAMonly.bcf
+bcftools view hapmap_NAMonly.bcf | less -S 
+
+bcftools stats hapmap_NAMonly.bcf > stats_hapmap_complete.txt
+less stats_hapmap_complete.txt 
+# subset hapmap dataset to include only the genomes present in the pangenome (B97 CML52 HP301 Il14H  MO18W (no B73))
+bcftools query -l hapmap_NAMonly.bcf > sampleshapmap.txt
+nano sampleshapmap.txt
+less sampleshapmap.txt
+
+bcftools view -Ou -S sampleshapmap.txt hapmap_NAMonly.bcf > hapmap_NAM_g.bcf
+bcftools view hapmap_NAM_g.bcf | less -S
+
+bcftools stats hapmap_NAM_g.bcf > stats_hapmap_5samples.txt
+less stats_hapmap_5samples.txt
+
+# filtering
+bcf=/michelle/vc_process/hapmap_NAM_g.bcf
+fasta=/uploaded/MA_B73_AGPv4_chromosomes.fasta
+work_dir=/michelle/vc_process
+
+bcftools annotate -Ou -x ^INFO/NS,^INFO/AC,^INFO/AF,^INFO/AN,^FORMAT/GT $bcf | \
+    bcftools view -Ou -i 'GT[*]="alt"' - | \
+    bcftools view -Oz -m 2 -M 2 -v snps --exclude-uncalled - | \
+    bcftools norm -Ou -a -D -f $fasta - | \
+    bcftools annotate -Ou --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' - | \
+    bcftools +fixploidy - -- -t GT > $work_dir/temp.vcf
+
+# replace MO18W for Mo18W sample name in the temp.vcf
+nano sample_name.txt
+less sample_name.txt
+bcftools reheader -s sample_name.txt temp.vcf > hapmap_5_filtered.vcf
+
+bcftools view hapmap_5_filtered.vcf | less -S
+bcftools stats hapmap_5_filtered.vcf > stats_hapmap_5_filtered.txt
+cat stats_hapmap_5_filtered.txt | less #18,707,622 SNPs (records)
+
+### pangenome with 6 genomes (optimized_param_set)
+# index to combine all chromosomes -> bcftools index -t (TBI-format index)
+for i in optimized_param_vcf_gz/chr*.vcf.gz
+do
+bcftools index -t -f $i 
+done
+
+# concatenate the chromosomes vcf files into 1 file
+# navigate to working directory
+bcftools concat chr1.vcf.gz chr2.vcf.gz chr3.vcf.gz chr4.vcf.gz chr5.vcf.gz chr6.vcf.gz chr7.vcf.gz chr8.vcf.gz chr9.vcf.gz chr10.vcf.gz -Oz -o pangenome_6g.vcf.gz
+mv pangenome_6g.vcf.gz /michelle/vc_process
+
+# edit chromosome and sample names for the comparison with hapmap file
+nano chr_rename.txt
+less chr_rename.txt
+
+bcftools annotate -Oz --rename-chrs chr_rename.txt pangenome_6g.vcf.gz > 6pg_chr.vcf.gz 
+bcftools query -l 6pg_chr.vcf.gz | cut -d "_" -f2 > sample_names_keep.txt
+bcftools reheader -s sample_names_keep.txt 6pg_chr.vcf.gz > 6pg_chr_samples.vcf.gz
+
+bcftools view 6pg_chr_samples.vcf.gz | less -S # conflicts present
+bcftools stats 6pg_chr_samples.vcf.gz > stats_delete.txt 
+cat stats_delete.txt | less -S # 84782530 records (55416938 SNPs, 12949267 indels)
+
+#remove conflicts 
+bcftools view 6pg_chr_samples.vcf.gz | grep -v 'CONFLICT' > 6pg_conflicts_removed.vcf
+
+bcftools view 6pg_conflicts_removed.vcf | less -S
+bcftools stats 6pg_conflicts_removed.vcf > 6pg_confrem_delete.txt
+cat 6pg_confrem_delete.txt # 53444131 records (35256021 SNPs, 8233033 indels)
+
+# filering
+bcftools view -Ou 6pg_conflicts_removed.vcf > 6pg_conflicts_removed.bcf
+
+bcftools stats 6pg_conflicts_removed.bcf > stats_6pg_conflicts_removed.txt
+less stats_6pg_conflicts_removed.txt
+
+rm -r temp.vcf
+
+bcf=/michelle/vc_process/6pg_conflicts_removed.bcf
+fasta=/uploaded/MA_B73_AGPv4_chromosomes.fasta
+work_dir=/michelle/vc_process
+
+bcftools annotate -Ou -x ^INFO/NS,^INFO/AC,^INFO/AF,^INFO/AN,^FORMAT/GT $bcf | \
+    bcftools view -Ou -i 'GT[*]="alt"' - | \
+    bcftools view -Oz -m 2 -M 2 -v snps --exclude-uncalled - | \
+    bcftools norm -Ou -a -D -f $fasta - | \
+    bcftools annotate -Ou --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' - | \
+    bcftools +fixploidy - -- -t GT > $work_dir/temp.vcf
+
+bcftools view temp.vcf > 6pangenome.vcf
+bcftools view 6pangenome.vcf | less
+bcftools stats 6pangenome.vcf > stats_6pangenome.txt
+less stats_6pangenome.txt
+
+############################################################################################################################
+### gtcheck ###
+# files: 1. hapmap with 5 samples and 2. pangenome only SNPs wo conflicts 
+hapmap_5_filtered.vcf
+6pangenome.vcf
+
+# compress + index hapmap with 5 samples file
+bcftools view -Oz hapmap_5_filtered.vcf  > hapmap_5_filtered.vcf.gz
+bcftools index hapmap_5_filtered.vcf.gz
+
+# compress and index 6pg file
+bcftools view -Oz 6pangenome.vcf > 6pangenome.vcf.gz
+bcftools index 6pangenome.vcf.gz
+
+# all samples against all samples / -e 0
+bcftools gtcheck -e 0 --no-HWE-prob -g hapmap_5_filtered.vcf.gz 6pangenome.vcf.gz > allsamples_comparison_5s.gtcheck 
+less allsamples_comparison_5s.gtcheck
+grep 'DC' allsamples_comparison_5s.gtcheck > allvsall_gtcheck_e0_s5.txt
+
+# specific comparison:compare pairs
+bcftools gtcheck -e 0 --no-HWE-prob -p B97,B97,CML52,CML52,HP301,HP301,Il14H,Il14H,Mo18W,Mo18W -g hapmap_5_filtered.vcf.gz 6pangenome.vcf.gz > pairs_hapmap_pangenome_5s.gtcheck
+less pairs_hapmap_pangenome_5s.gtcheck
+grep 'DC' pairs_hapmap_pangenome_5s.gtcheck > pairs_gtcheck_e0_s5.txt
+
+# https://github.com/samtools/bcftools/issues/1538
+# -e 0 every mismatch is considered as a hard mismatch
+# default e -40 there is a non-zero probability that the mismatch is due to a genotyping error, hence discordance is different
+# discordance scores are not comparable across different VCFs. 
+# They can be used safely only to compare the relative difference between samples within the same VCF and similar number of accessible sites.
+
+# why don't we have more overlap ?
+# extract positions 1'000.000 - 1'001.000 from chr1 in hapmap and pg
+bcftools view -t 1:1000000-1001000 hapmap_5_filtered.vcf.gz > hapmap_1000_s5.txt
+cat hapmap_1000_s5.txt | less -S
+
+bcftools view -t 1:1000000-1001000 6pangenome.vcf.gz > 6pangenome_1000.txt
+cat 6pangenome_1000.txt | less -S
+
+# continue in R gtcheck_vc_calling_process.R script
+
+#chr1
+bcftools view --regions 1 hapmap_5_filtered.vcf.gz | cut -f 3 - > SNPs_hapmap_chr1.txt
+bcftools view --regions 1 6pangenome.vcf.gz | cut -f 3 - > SNPs_pangenome_chr1.txt
+
+#chr10
+bcftools view --regions 10 hapmap_5_filtered.vcf.gz | cut -f 3 - > SNPs_hapmap_chr10.txt
+bcftools view --regions 10 6pangenome.vcf.gz | cut -f 3 - > SNPs_pangenome_chr10.txt
+
+
+
+
+
+
+
+
+
+
+### SAME PROCESS BYT ON HAPMAP FILE WITH 26 SAMPLES ###
+# hapmap file complete
+# filtering
+bcf=/michelle/vc_process/hapmap_NAMonly.bcf
+fasta=/uploaded/MA_B73_AGPv4_chromosomes.fasta
+work_dir=/michelle/vc_process
+
+bcftools annotate -Ou -x ^INFO/NS,^INFO/AC,^INFO/AF,^INFO/AN,^FORMAT/GT $bcf | \
+    bcftools view -Ou -i 'GT[*]="alt"' - | \
+    bcftools view -Oz -m 2 -M 2 -v snps --exclude-uncalled - | \
+    bcftools norm -Ou -a -D -f $fasta - | \
+    bcftools annotate -Ou --set-id '%CHROM\_%POS\_%REF\_%FIRST_ALT' - | \
+    bcftools +fixploidy - -- -t GT > $work_dir/temp.vcf
+
+# replace MO18W for Mo18W sample name in the temp.vcf
+nano sample_name.txt
+less sample_name.txt
+bcftools reheader -s sample_name.txt temp.vcf > hapmap_NAM.vcf
+
+bcftools view hapmap_NAM.vcf | less -S
+bcftools stats hapmap_NAM.vcf > stats_hapmap.txt
+cat stats_hapmap.txt | less # 34130729 records (=SNPs)
+
+### gtcheck ###
+# files: 1. hapmap with 26 samples and 2. pangenome only SNPs wo conflicts 
+hapmap_NAM.vcf
+6pangenome.vcf
+
+# compress + index hapmap file (with 26 samples)
+bcftools view -Oz hapmap_NAM.vcf  > hapmap_NAM.vcf.gz 
+bcftools index hapmap_NAM.vcf.gz
+
+# compress and index 6pg file
+bcftools view -Oz 6pangenome.vcf > 6pangenome.vcf.gz
+bcftools index 6pangenome.vcf.gz
+
+# basic comparison: all samples from 6pangenome against all samples in hapmap file
+bcftools gtcheck -g hapmap_NAM.vcf.gz 6pangenome.vcf.gz > general_hapmap_vs_6pg.gtcheck 
+less general_hapmap_vs_6pg.gtcheck
+
+# all samples against all samples / -e 0
+bcftools gtcheck -e 0 --no-HWE-prob -g hapmap_NAM.vcf.gz 6pangenome.vcf.gz > allsamples_comparison.gtcheck 
+less allsamples_comparison.gtcheck
+grep 'DC' allsamples_comparison.gtcheck > allvsall_gtcheck_e0.txt
+
+# specific comparison:compare pairs
+bcftools gtcheck -e 0 --no-HWE-prob -p B97,B97,CML52,CML52,HP301,HP301,Il14H,Il14H,Mo18W,Mo18W -g hapmap_NAM.vcf.gz 6pangenome.vcf.gz > pairs_hapmap_pangenome.gtcheck
+less pairs_hapmap_pangenome.gtcheck
+grep 'DC' pairs_hapmap_pangenome.gtcheck > pairs_gtcheck_e0.txt
+
+# https://github.com/samtools/bcftools/issues/1538
+# -e 0 every mismatch is considered as a hard mismatch
+# default e -40 there is a non-zero probability that the mismatch is due to a genotyping error, hence discordance is different
+# discordance scores are not comparable across different VCFs. 
+# They can be used safely only to compare the relative difference between samples within the same VCF and similar number of accessible sites.
+
+# why don't we have more overlap ?
+# extract positions 1'000.000 - 1'001.000 from chr1 in hapmap and pg
+bcftools view -t 1:1000000-1001000 hapmap_NAM.vcf.gz > hapmap_1000.txt
+cat hapmap_1000.txt | less -S
+
+bcftools view -t 1:1000000-1001000 6pangenome.vcf.gz > 6pangenome_1000.txt
+cat 6pangenome_1000.txt | less -S
+
+# continue in R gtcheck_vc_calling_process.R script
+
