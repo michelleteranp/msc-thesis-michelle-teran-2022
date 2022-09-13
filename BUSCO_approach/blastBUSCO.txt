@@ -25,7 +25,7 @@ blastdbcmd -db MA_B73_AGPv4_r36 -info
 #blast
 blastp -db MA_B73_AGPv4_r36 -query /michelle/blast/poales_odb10.2020-08-05/poales_odb10/ancestral -max_target_seqs 1 -outfmt 6 -out BUSCOblast -num_threads 2
 #check output
-BUSCOblast less
+less BUSCOblast
 nano BUSCOblast
 
 # BLASTP Mo18W
@@ -62,9 +62,9 @@ do
 sed "s/^/MA_B73_v4.1."$i",/" -i BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt
 odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
 odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(cat BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_B73_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B73_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+pathresults=$(wc -l path_position_results_B73_"$i".txt)
+graphresults=$(wc -l graph_position_results_B73_"$i".txt)
 echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
@@ -79,18 +79,18 @@ do
 sed "s/^/MA_Mo18W.1."$i",/" -i BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt
 odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
 odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(cat BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_Mo18_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_Mo18_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
 echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
 # Get lists of found and not found positions (for verification)
 grep -f BUSCO_positions_B73/BUSCO_positions_B73_chr2.txt path_position_results_B73_chr2.txt  > found.txt
-cat found.txt | wc -l # 303, same as counted before in the for loop.
+wc -l found.txt # 303, same as counted before in the for loop.
 sed 's/,+.*//' found.txt > found_positions.txt # only positions
 grep -v -f found_positions.txt BUSCO_positions_B73/BUSCO_positions_B73_chr2.txt > not_found.txt
-cat not_found.txt | wc -l # 227, confirmed results 530-303 = 227
+wc -l not_found.txt # 227, confirmed results 530-303 = 227
 
 ### Check if the change of parameters affects the % of lift-over ###
 # Pangenomes with different parameter sets were generated (see pangenome_construction folder)
@@ -112,9 +112,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(cat BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_B73_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B73_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+pathresults=$(wc -l path_position_results_B73_"$i".txt)
+graphresults=$(wc -l graph_position_results_B73_"$i".txt)
 echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
@@ -124,9 +124,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(cat BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_Mo18_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_Mo18_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
 echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
@@ -146,12 +146,12 @@ conda activate odgi
 less B73_chr1.bed
 
 odgi position -i ogFiles/chr1.og -b B73_chr1.bed -r MA_Mo18W.1.chr1 > path_position_results_B73_BED.txt
-cat path_position_results_B73_BED.txt | wc -l # 549, it works! -10 positions compared to the process with start positions only
-cat path_position_results_B73_chr1.txt | wc -l #1118/2 = 559 (divided by 2 because here the output prints header for every position)
+wc -l path_position_results_B73_BED.txt   # 549, it works! -10 positions compared to the process with start positions only
+wc -l path_position_results_B73_chr1.txt  #1118/2 = 559 (divided by 2 because here the output prints header for every position)
 
 odgi position -i ogFiles/chr1.og -b B73_chr1.bed -v > graph_position_results_B73_BED.txt 
-cat graph_position_results_B73_BED.txt | wc -l #864, it works! same result obtained with start positions only
-cat graph_position_results_B73_chr1.txt | wc -l #1728/2 = 864 (divided by 2 because here the output prints header for every position)
+wc -l graph_position_results_B73_BED.txt   #864, it works! same result obtained with start positions only
+wc -l graph_position_results_B73_chr1.txt  #1728/2 = 864 (divided by 2 because here the output prints header for every position)
 
 # using a BED file as input, the output does not print headers
 path_position_results_B73_BED.txt #549
@@ -163,12 +163,12 @@ graph_position_results_B73_chr1.txt #864
 less Mo18W_chr1.bed
 
 odgi position -i ogFiles/chr1.og -b Mo18W_chr1.bed -r MA_B73_v4.1.chr1 > path_position_results_Mo18W_BED.txt
-cat path_position_results_Mo18W_BED.txt | wc -l #544 -13 positions compared to process with start positions only
-cat path_position_results_Mo18_chr1.txt | wc -l #1114/2 = 557
+wc -l path_position_results_Mo18W_BED.txt  #544 -13 positions compared to process with start positions only
+wc -l path_position_results_Mo18_chr1.txt  #1114/2 = 557
 
 odgi position -i ogFiles/chr1.og -b Mo18W_chr1.bed -v > graph_position_results_Mo18W_BED.txt
-cat graph_position_results_Mo18W_BED.txt | wc -l #869
-cat graph_position_results_Mo18_chr1.txt | wc -l #1738/2 = 869
+wc -l graph_position_results_Mo18W_BED.txt  #869
+wc -l graph_position_results_Mo18_chr1.txt  #1738/2 = 869
 
 # Conclusion: results obtained with odgi position based on BED files were comparable to those obtained with odgi position and files with start positions.
 
@@ -183,9 +183,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -r MA_Mo18W.1."$i" > path_position_results_B73_BED_"$i".txt
 odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -v > graph_position_results_B73_BED_"$i".txt
-pathcount=$(cat BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed | wc -l)
-pathresults=$(cat path_position_results_B73_BED_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B73_BED_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed)
+pathresults=$(wc -l path_position_results_B73_BED_"$i".txt)
+graphresults=$(wc -l graph_position_results_B73_BED_"$i".txt)
 echo "Input BUSCOs in B73_BED "$i": $pathcount. Path position results in Mo18W: $pathresults. Graph position results: $graphresults." >> liftover_B73_BED.txt
 done
 
@@ -195,9 +195,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -r MA_B73_v4.1."$i" > path_position_results_Mo18_BED_"$i".txt
 odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -v > graph_position_results_Mo18_BED_"$i".txt
-pathcount=$(cat BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed | wc -l)
-pathresults=$(cat path_position_results_Mo18_BED_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_Mo18_BED_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed)
+pathresults=$(wc -l path_position_results_Mo18_BED_"$i".txt)
+graphresults=$(wc -l graph_position_results_Mo18_BED_"$i".txt)
 echo "Input BUSCOs in Mo18W_BED "$i": $pathcount. Path position results in B73: $pathresults. Graph position results: $graphresults." >> lifotver_Mo18W_BED.txt
 done
 
@@ -213,9 +213,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(cat BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_B73_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B73_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+pathresults=$(wc -l path_position_results_B73_"$i".txt)
+graphresults=$(wc -l graph_position_results_B73_"$i".txt)
 echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73.txt
 done
 
@@ -224,9 +224,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(cat BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_Mo18_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_Mo18_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
 echo "Input BUSCOs in Mo18W "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_Mo18W.txt
 done
 
@@ -241,9 +241,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_B97.1."$i" > path_position_results_B73_B97_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_B97_"$i".txt
-pathcount=$(cat BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_B73_B97_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B73_B97_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+pathresults=$(wc -l path_position_results_B73_B97_"$i".txt)
+graphresults=$(wc -l graph_position_results_B73_B97_"$i".txt)
 echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in B97: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73_B97.txt
 done
 
@@ -252,9 +252,9 @@ for i in "${chr[@]}"
 do
 odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_B97_"$i".txt
 odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -v > graph_position_results_B97_"$i".txt
-pathcount=$(cat BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt | wc -l)
-pathresults=$(cat path_position_results_B97_"$i".txt | wc -l)
-graphresults=$(cat graph_position_results_B97_"$i".txt | wc -l)
+pathcount=$(wc -l BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt)
+pathresults=$(wc -l path_position_results_B97_"$i".txt)
+graphresults=$(wc -l graph_position_results_B97_"$i".txt)
 echo "Input BUSCOs in B97 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B97_B73.txt
 done
 

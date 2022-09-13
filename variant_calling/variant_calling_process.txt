@@ -40,7 +40,7 @@ bcftools reheader -s sample_name.txt temp.vcf > hapmap_5_filtered.vcf
 
 bcftools view hapmap_5_filtered.vcf | less -S
 bcftools stats hapmap_5_filtered.vcf > stats_hapmap_5_filtered.txt
-cat stats_hapmap_5_filtered.txt | less #18,707,622 SNPs (records)
+less stats_hapmap_5_filtered.txt #18,707,622 SNPs (records)
 
 ### pangenome with 6 genomes (optimized_param_set)
 # index to combine all chromosomes -> bcftools index -t (TBI-format index)
@@ -64,7 +64,7 @@ bcftools reheader -s sample_names_keep.txt 6pg_chr.vcf.gz > 6pg_chr_samples.vcf.
 
 bcftools view 6pg_chr_samples.vcf.gz | less -S # conflicts present
 bcftools stats 6pg_chr_samples.vcf.gz > stats_delete.txt 
-cat stats_delete.txt | less -S # 84782530 records (55416938 SNPs, 12949267 indels)
+less -S stats_delete.txt # 84782530 records (55416938 SNPs, 12949267 indels)
 
 #remove conflicts 
 bcftools view 6pg_chr_samples.vcf.gz | grep -v 'CONFLICT' > 6pg_conflicts_removed.vcf
@@ -130,10 +130,10 @@ grep 'DC' pairs_hapmap_pangenome_5s.gtcheck > pairs_gtcheck_e0_s5.txt
 # why don't we have more overlap ?
 # extract positions 1'000.000 - 1'001.000 from chr1 in hapmap and pg
 bcftools view -t 1:1000000-1001000 hapmap_5_filtered.vcf.gz > hapmap_1000_s5.txt
-cat hapmap_1000_s5.txt | less -S
+less -S hapmap_1000_s5.txt
 
 bcftools view -t 1:1000000-1001000 6pangenome.vcf.gz > 6pangenome_1000.txt
-cat 6pangenome_1000.txt | less -S
+less -S 6pangenome_1000.txt 
 
 # continue in R gtcheck_vc_calling_process.R script
 
@@ -175,7 +175,7 @@ bcftools reheader -s sample_name.txt temp.vcf > hapmap_NAM.vcf
 
 bcftools view hapmap_NAM.vcf | less -S
 bcftools stats hapmap_NAM.vcf > stats_hapmap.txt
-cat stats_hapmap.txt | less # 34130729 records (=SNPs)
+less stats_hapmap.txt # 34130729 records (=SNPs)
 
 ### gtcheck ###
 # files: 1. hapmap with 26 samples and 2. pangenome only SNPs wo conflicts 
@@ -213,10 +213,10 @@ grep 'DC' pairs_hapmap_pangenome.gtcheck > pairs_gtcheck_e0.txt
 # why don't we have more overlap ?
 # extract positions 1'000.000 - 1'001.000 from chr1 in hapmap and pg
 bcftools view -t 1:1000000-1001000 hapmap_NAM.vcf.gz > hapmap_1000.txt
-cat hapmap_1000.txt | less -S
+less -S hapmap_1000.txt
 
 bcftools view -t 1:1000000-1001000 6pangenome.vcf.gz > 6pangenome_1000.txt
-cat 6pangenome_1000.txt | less -S
+less -S 6pangenome_1000.txt
 
 # continue in R gtcheck_vc_calling_process.R script
 
