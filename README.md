@@ -4,7 +4,13 @@ A project to hold scripts and workflow from Michelle Terán developed as part of
 
 Scripts are divided into different folders as described:
 
-## 1. BUSCO approach
+## 1. Pangenome construction
+- [ ] pangenome_construction_manual.txt 
+  - Create pangenomes with 2 genomes and different parameter sets with the PGGB pipeline.
+- [ ] 6genomes_param_sets.txt 
+  - Create pangenomes with 6 genomes and different parameter sets with the PGGB pipeline.
+
+## 2. BUSCO approach
 - [ ] blastBUSCO.txt
   -  BLASTP poales_odb10 ancestral BUSCO dataset and B73AGPv04, Mo18W and B97.
   -  Run for loop to determine the number of BUSCOs present in the pangenome .og files.
@@ -13,7 +19,7 @@ Scripts are divided into different folders as described:
 - [ ] plot_pangenome_liftover.R
   - Generate bar plots of lift-over percentage achieved in pangenomes with 2 and 6 genomes and different parameter sets.
 
-## 2. Extraction and visualization
+## 3. Extraction and visualization
 - [ ] extraction_three_candidate_genes.txt: procedure for the extraction of ZmCCT, Anthocyanin regulatory C1 and ZmRLK1 from a pangenome with 7 genomes (B73_v4, B73_v5, B97, CML52, HP301, Il14H, M37W) and parameter set (-p 90, -s 10000, -a asm20, -n 7)
   - Create .bed file for each gene +- 1000 bp window.
   - Extract with odgi extract.
@@ -27,11 +33,6 @@ Scripts are divided into different folders as described:
 - [ ] extract_target_genes.txt
   - Exploration of extraction of regions/genes with different options of odgi extract: extraction with node ID, path range, .bed files.
 
-## 3. Pangenome construction
-- [ ] pangenome_construction_manual.txt 
-  - Create pangenomes with 2 genomes and different parameter sets with the PGGB pipeline.
-- [ ] 6genomes_param_sets.txt 
-  - Create pangenomes with 6 genomes and different parameter sets with the PGGB pipeline.
 
 ## 4. Pangenome navigation
 - Scripts used to explore navigation with path and graph positions, average node length, degree, depth, node size, odgi stats, and estimate divergency with mash.

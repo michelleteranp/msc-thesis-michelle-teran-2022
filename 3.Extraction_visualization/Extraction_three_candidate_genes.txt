@@ -21,6 +21,7 @@ odgi paths -i chr10.og -l -L
 
 ### 1. Flowering time: ZmCCT  - Zm00001d024909 (AGPv04) - 10:94430850-94433495 ###
 # create bed file with coordinates +- 1000 bp
+# use the nano text editor to create bed files for each gene
 nano ZmCCT.bed
 #extraction
 odgi extract -i chr10.og  -b ZmCCT.bed -P -s -E
@@ -185,7 +186,7 @@ odgi paths -i RLK1_sorted.og -l -L                              # same result ob
 #MA_M37W.1.chr8:158166233-158368275      1       202042
 #MA_M37W.1.chr8:160239037-160239038      1       1
 
-### eliminate 1 - 1 paths
+### eliminate paths providing a list
 odgi extract -i MA_B73_v4.1.chr8:156762311-156775071.og -p paths_to_conserve.txt -E -o RLK1_conserved_paths.og
 
 nano paths_to_conserve.txt

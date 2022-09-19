@@ -59,13 +59,13 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-sed "s/^/MA_B73_v4.1."$i",/" -i BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt
-odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
-odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
-pathresults=$(wc -l path_position_results_B73_"$i".txt)
-graphresults=$(wc -l graph_position_results_B73_"$i".txt)
-echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
+	sed "s/^/MA_B73_v4.1."$i",/" -i BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt
+	odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
+	odgi position -i ogFiles/"$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+	pathresults=$(wc -l path_position_results_B73_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B73_"$i".txt)
+	echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
 # Mo18W
@@ -76,13 +76,13 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-sed "s/^/MA_Mo18W.1."$i",/" -i BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt
-odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
-odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
-pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
-graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
-echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
+	sed "s/^/MA_Mo18W.1."$i",/" -i BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt
+	odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
+	odgi position -i ogFiles/"$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+	pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+	graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
+	echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
 # Get lists of found and not found positions (for verification)
@@ -110,24 +110,24 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
-pathresults=$(wc -l path_position_results_B73_"$i".txt)
-graphresults=$(wc -l graph_position_results_B73_"$i".txt)
-echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+	pathresults=$(wc -l path_position_results_B73_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B73_"$i".txt)
+	echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
 # Mo18W
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
-pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
-graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
-echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
+	odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+	pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+	graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
+	echo "Input BUSCOs in Mo18 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))."
 done
 
 # BUSCOs in ancestral poales file: 	4896
@@ -181,23 +181,23 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -r MA_Mo18W.1."$i" > path_position_results_B73_BED_"$i".txt
-odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -v > graph_position_results_B73_BED_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed)
-pathresults=$(wc -l path_position_results_B73_BED_"$i".txt)
-graphresults=$(wc -l graph_position_results_B73_BED_"$i".txt)
-echo "Input BUSCOs in B73_BED "$i": $pathcount. Path position results in Mo18W: $pathresults. Graph position results: $graphresults." >> liftover_B73_BED.txt
+	odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -r MA_Mo18W.1."$i" > path_position_results_B73_BED_"$i".txt
+	odgi position -i "$i".og -b BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed -v > graph_position_results_B73_BED_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B73_BED/BUSCO_positions_BED_B73_"$i".bed)
+	pathresults=$(wc -l path_position_results_B73_BED_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B73_BED_"$i".txt)
+	echo "Input BUSCOs in B73_BED "$i": $pathcount. Path position results in Mo18W: $pathresults. Graph position results: $graphresults." >> liftover_B73_BED.txt
 done
 
 # Mo18
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -r MA_B73_v4.1."$i" > path_position_results_Mo18_BED_"$i".txt
-odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -v > graph_position_results_Mo18_BED_"$i".txt
-pathcount=$(wc -l BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed)
-pathresults=$(wc -l path_position_results_Mo18_BED_"$i".txt)
-graphresults=$(wc -l graph_position_results_Mo18_BED_"$i".txt)
+	odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -r MA_B73_v4.1."$i" > path_position_results_Mo18_BED_"$i".txt
+	odgi position -i "$i".og -b BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed -v > graph_position_results_Mo18_BED_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_Mo18W_BED/BUSCO_positions_BED_Mo18W_"$i".bed)
+	pathresults=$(wc -l path_position_results_Mo18_BED_"$i".txt)
+	graphresults=$(wc -l graph_position_results_Mo18_BED_"$i".txt)
 echo "Input BUSCOs in Mo18W_BED "$i": $pathcount. Path position results in B73: $pathresults. Graph position results: $graphresults." >> lifotver_Mo18W_BED.txt
 done
 
@@ -211,23 +211,23 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
-pathresults=$(wc -l path_position_results_B73_"$i".txt)
-graphresults=$(wc -l graph_position_results_B73_"$i".txt)
-echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73.txt
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_Mo18W.1."$i" > path_position_results_B73_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+	pathresults=$(wc -l path_position_results_B73_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B73_"$i".txt)
+	echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in Mo18W: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73.txt
 done
 
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
-pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
-pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
-graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
-echo "Input BUSCOs in Mo18W "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_Mo18W.txt
+	odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_Mo18_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt -v > graph_position_results_Mo18_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_Mo18/BUSCO_positions_Mo18_"$i".txt)
+	pathresults=$(wc -l path_position_results_Mo18_"$i".txt)
+	graphresults=$(wc -l graph_position_results_Mo18_"$i".txt)
+	echo "Input BUSCOs in Mo18W "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_Mo18W.txt
 done
 
 
@@ -239,23 +239,23 @@ conda activate odgi
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_B97.1."$i" > path_position_results_B73_B97_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_B97_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
-pathresults=$(wc -l path_position_results_B73_B97_"$i".txt)
-graphresults=$(wc -l graph_position_results_B73_B97_"$i".txt)
-echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in B97: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73_B97.txt
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -r MA_B97.1."$i" > path_position_results_B73_B97_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt -v > graph_position_results_B73_B97_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B73/BUSCO_positions_B73_"$i".txt)
+	pathresults=$(wc -l path_position_results_B73_B97_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B73_B97_"$i".txt)
+	echo "Input BUSCOs in B73 "$i": $pathcount. Path position results in B97: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B73_B97.txt
 done
 
 chr=(chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10)
 for i in "${chr[@]}"
 do
-odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_B97_"$i".txt
-odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -v > graph_position_results_B97_"$i".txt
-pathcount=$(wc -l BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt)
-pathresults=$(wc -l path_position_results_B97_"$i".txt)
-graphresults=$(wc -l graph_position_results_B97_"$i".txt)
-echo "Input BUSCOs in B97 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B97_B73.txt
+	odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -r MA_B73_v4.1."$i" > path_position_results_B97_"$i".txt
+	odgi position -i "$i".og -F BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt -v > graph_position_results_B97_"$i".txt
+	pathcount=$(wc -l BUSCO_positions_B97/BUSCO_positions_B97_"$i".txt)
+	pathresults=$(wc -l path_position_results_B97_"$i".txt)
+	graphresults=$(wc -l graph_position_results_B97_"$i".txt)
+	echo "Input BUSCOs in B97 "$i": $pathcount. Path position results in B73: $((pathresults/2)). Graph position results: $((graphresults/2))." >> liftover_B97_B73.txt
 done
 
 ### end of BUSCO approach ###
